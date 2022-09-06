@@ -1,6 +1,9 @@
 os: linux
 arch: ppc64le
 
+before_script:
+    - python -m pip install requests
+
 script:
     - if: type = api
     - ip addr show

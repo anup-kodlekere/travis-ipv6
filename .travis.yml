@@ -7,6 +7,7 @@ script:
 #   - test -f /proc/net/if_inet6 && echo "IPv6 supported" || echo "IPv6 not supported"
 #   - ping6 -c3  2001:4860:4860::8888
 #   - ping ipv6.google.com
-#   - docker run -t debian:latest ping -6 ipv6.google.com
     - ping6 -c3 google.com
+    - ping -c3 google.com
     - sysctl -a 2>/dev/null | grep disable_ipv6
+    - curl https://api64.ipify.org

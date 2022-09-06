@@ -6,3 +6,5 @@ script:
   - cat /sys/module/ipv6/parameters/disable
   - test -f /proc/net/if_inet6 && echo "IPv6 supported" || echo "IPv6 not supported"
   - ping6 -c3  2001:4860:4860::8888
+  - ping ipv6.google.com
+  - docker run -it debian:latest "ping ipv6.google.com"

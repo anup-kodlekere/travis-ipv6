@@ -2,9 +2,10 @@ os: linux
 arch: ppc64le
 
 script:
-  - ip addr show
-  - cat /sys/module/ipv6/parameters/disable
-  - test -f /proc/net/if_inet6 && echo "IPv6 supported" || echo "IPv6 not supported"
-  - ping6 -c3  2001:4860:4860::8888
-  - ping ipv6.google.com
-  - docker run -t debian:latest ping -6 ipv6.google.com
+#   - ip addr show
+#   - cat /sys/module/ipv6/parameters/disable
+#   - test -f /proc/net/if_inet6 && echo "IPv6 supported" || echo "IPv6 not supported"
+#   - ping6 -c3  2001:4860:4860::8888
+#   - ping ipv6.google.com
+#   - docker run -t debian:latest ping -6 ipv6.google.com
+    - ping -6 google.com

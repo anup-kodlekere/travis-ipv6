@@ -5,3 +5,4 @@ script:
   - ip -6 addr
   - cat /sys/module/ipv6/parameters/disable
   - test -f /proc/net/if_inet6 && echo "IPv6 supported" || echo "IPv6 not supported"
+  - ping -c3  2001:4860:4860::8888

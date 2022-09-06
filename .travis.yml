@@ -8,4 +8,4 @@ script:
 #   - ping6 -c3  2001:4860:4860::8888
 #   - ping ipv6.google.com
 #   - docker run -t debian:latest ping -6 ipv6.google.com
-    - ping -6 google.com
+    - ping6 -c3 google.com

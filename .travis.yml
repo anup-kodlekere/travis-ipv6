@@ -1,18 +1,20 @@
-os: linux
-arch: ppc64le
-
 before_script:
     - python -m pip install requests
-
+jobs:
+    include:
+        - env: ENV=X86
+          os: linux
+        - env: ENV=Power
+          os: linux
+          arch: ppc64le
 script:
-    - if: type = api
     - ip addr show
-#   - cat /sys/module/ipv6/parameters/disable
-#   - test -f /proc/net/if_inet6 && echo "IPv6 supported" || echo "IPv6 not supported"
-#   - ping6 -c3  2001:4860:4860::8888
-#   - ping ipv6.google.com
-#     - ping6 -c3 google.com
-#     - ping -c3 google.com
-#     - sysctl -a 2>/dev/null | grep disable_ipv6
-#     - curl https://api64.ipify.org
+    - cat /sys/module/ipv6/parameters/disable
+    - test -f /proc/net/if_inet6 && echo "IPv6 supported" || echo "IPv6 not supported"
+    - ping6 -c3 2001:4860:4860::8888
+    - ping ipv6.google.com
+    - ping6 -c3 google.com
+    - ping -c3 google.com
+    - sysctl -a 2>/dev/null | grep disable_ipv6
+    - curl https://api64.ipify.org
     - python test.py

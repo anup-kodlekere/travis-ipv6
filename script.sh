@@ -1,5 +1,8 @@
 set -e
 
+echo "node-options=--max_old_space_size=4096" >> ~/.npmrc
+echo "alias npm='node --dns-result-order=ipv4first /usr/bin/npm'" >> ~/.bashrc
+
 PACKAGE_NAME=kogito-apps
 PACKAGE_VERSION=${1:-1.36.1.Final}
 PACKAGE_URL=https://github.com/kiegroup/kogito-apps.git

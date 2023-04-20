@@ -1,20 +1,35 @@
-before_script:
-    - python -m pip install requests
-jobs:
-    include:
-        - env: ENV=X86
-          os: linux
-        - env: ENV=Power
-          os: linux
-          arch: ppc64le
+# before_script:
+#     - python -m pip install requests
+# jobs:
+#     include:
+#         - env: ENV=X86
+#           os: linux
+#         - env: ENV=Power
+#           os: linux
+#           arch: ppc64le
+# script:
+#     - ip addr show
+#     - cat /sys/module/ipv6/parameters/disable
+#     - test -f /proc/net/if_inet6 && echo "IPv6 supported" || echo "IPv6 not supported"
+#     - ping6 -c3 2001:4860:4860::8888
+#     - ping ipv6.google.com
+#     - ping6 -c3 google.com
+#     - ping -c3 google.com
+#     - sysctl -a 2>/dev/null | grep disable_ipv6
+#     - curl https://api64.ipify.org
+#     - python test.py
+arch: ppc64le
+dist: focal
+os: linux
+language: shell
+
+services:
+    - docker
+
+before_install:
+    - docker pull registry.access.redhat.com/ubi8/ubi:8.5
+
 script:
-    - ip addr show
-    - cat /sys/module/ipv6/parameters/disable
-    - test -f /proc/net/if_inet6 && echo "IPv6 supported" || echo "IPv6 not supported"
-    - ping6 -c3 2001:4860:4860::8888
-    - ping ipv6.google.com
-    - ping6 -c3 google.com
-    - ping -c3 google.com
-    - sysctl -a 2>/dev/null | grep disable_ipv6
-    - curl https://api64.ipify.org
-    - python test.py
+    - chmod +x script.sh
+    - docker run -dt --name test --rm -v $PWD:/home/tester registry.access.redhat.com/ubi8/ubi:8.5 bash -c "/home/tester/script.sh"
+    - docker logs -f test

@@ -1,14 +1,14 @@
-#!/bin/bash -e
-# -----------------------------------------------------------------------------
+#!/bin/bash
+# ---------------------------------------------------------------------
 #
-# Package       : che-incubator/devfile-converter
-# Version       : main
-# Source repo   : https://github.com/che-incubator/devfile-converter.git
-# Tested on     : UBI 8.7
-# Language      : Node
+# Package       : kiegroup
+# Version       : 1.36.1.Final
+# Source repo   : https://github.com/kiegroup/kogito-apps.git
+# Tested on     : UBI 8.5
+# Language      : JAVA
 # Travis-Check  : True
 # Script License: Apache License, Version 2 or later
-# Maintainer    : Shreya Kajbaje <Shreya.Kajbaje@ibm.com>
+# Maintainer    : Bhimrao Patil <Bhimrao.Patil@ibm.com>
 #
 # Disclaimer: This script has been tested in root mode on given
 # ==========  platform using the mentioned version of the package.
@@ -16,41 +16,55 @@
 #             package and/or distribution. In such case, please
 #             contact "Maintainer" of this script.
 #
-# ----------------------------------------------------------------------------
+# ---------------------------------------------------------------------
+set -e
 
-# echo "node-options=--max_old_space_size=4096" >> ~/.npmrc
-# echo "alias npm='node --dns-result-order=ipv4first /usr/bin/npm'" >> ~/.bashrc
+nproc
+free -h
 
 export NODE_OPTIONS="--dns-result-order=ipv4first"
+PACKAGE_NAME=kogito-apps
+PACKAGE_VERSION=${1:-1.36.1.Final}
+PACKAGE_URL=https://github.com/kiegroup/kogito-apps.git
 
-PACKAGE_NAME=devfile-converter
-PACKAGE_VERSION=${1:-main}
-PACKAGE_URL=https://github.com/che-incubator/devfile-converter.git
-
+yum update -y
 yum install -y git curl
-
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 nvm install v18.12.0
-ln -s $HOME/.nvm/versions/node/v18.12.0/bin/node /usr/bin/node
-ln -s $HOME/.nvm/versions/node/v18.12.0/bin/npm /usr/bin/npm
+ln -s $HOME/.nvm/versions/node/v18.12.0n/bin/node /usr/bin/node
+ln -s $HOME/.nvm/versions/node/v18.12.0n/bin/npm /usr/bin/npm
 
-yum install npm -y
-npm install -g yarn
-
-if ! git clone $PACKAGE_URL; then
-    echo "------------------$PACKAGE_NAME:clone_fails---------------------------------------"
-    echo "$PACKAGE_URL $PACKAGE_NAME"
-    exit 0
+#Check if package exists
+if [ -d "$PACKAGE_NAME" ] ; then
+	rm -rf $PACKAGE_NAME
+	echo "$PACKAGE_NAME  | $PACKAGE_VERSION | $OS_NAME | GitHub | Removed existing package if any"
 fi
 
-cd $PACKAGE_NAME
+if ! git clone $PACKAGE_URL $PACKAGE_NAME; then
+	echo "------------------$PACKAGE_NAME:clone_fails---------------------------------------"
+	echo "$PACKAGE_URL $PACKAGE_NAME"
+	echo "$PACKAGE_NAME  |  $PACKAGE_URL | $PACKAGE_VERSION | $OS_NAME | GitHub  | Pass |  Both_Install_and_Test_Success"
+	exit 0
+fi
 
+cd $PACKAGE_NAME/
 git checkout $PACKAGE_VERSION
 
-yarn 
+cd ui-packages/
+yum install npm -y
+npm install -g yarn
+yarn install
+yarn run init
+export NODE_OPTIONS=--openssl-legacy-provider
+
+if ! yarn run build:prod; then
+    echo "------------------$PACKAGE_NAME:build_fails---------------------------------------"
+    echo "$PACKAGE_URL $PACKAGE_NAME"
+    exit 1
+fi
 
 if ! yarn run build; then
     echo "------------------$PACKAGE_NAME:build_fails---------------------------------------"
@@ -58,8 +72,14 @@ if ! yarn run build; then
     exit 1
 fi
 
-if ! yarn test; then
-    echo "------------------$PACKAGE_NAME:test_fails---------------------------------------"
+if ! yarn run build:fast; then
+    echo "------------------$PACKAGE_NAME:build_fails---------------------------------------"
     echo "$PACKAGE_URL $PACKAGE_NAME"
-    exit 2
+    exit 1
+fi
+
+if ! yarn test -u; then
+	echo "------------------$PACKAGE_NAME:install_success_but_test_fails---------------------"
+	echo "$PACKAGE_NAME  |  $PACKAGE_URL | $PACKAGE_VERSION | GitHub | Fail |  Install_success_but_test_Fails"
+	exit 2
 fi

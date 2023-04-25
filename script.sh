@@ -19,9 +19,6 @@
 # ---------------------------------------------------------------------
 set -e
 
-nproc
-free -h
-
 export NODE_OPTIONS="--dns-result-order=ipv4first"
 PACKAGE_NAME=kogito-apps
 PACKAGE_VERSION=${1:-1.36.1.Final}

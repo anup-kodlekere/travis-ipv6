@@ -43,14 +43,14 @@ before_install:
     - ip -6 addr
     
 jobs:
-    include:
-        - env: HOST=x86
-          os: linux
-          dist: focal
-        - env: HOST=Power
-          arch: ppc64le
-          os: linux
-          dist: focal
+  include:
+      - env: HOST=x86
+        os: linux
+        dist: focal
+      - env: HOST=Power
+        arch: ppc64le
+        os: linux
+        dist: focal
 
 after_script:
     - cat  /root/.npm/_logs/*-debug-0.log

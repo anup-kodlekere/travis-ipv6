@@ -19,8 +19,8 @@
 #     - curl https://api64.ipify.org
 #     - python test.py
 # arch: ppc64le
-# dist: focal
-# os: linux
+dist: focal
+os: linux
 language: shell
 
 services:
@@ -41,16 +41,7 @@ before_install:
     - cat /sys/module/ipv6/parameters/disable
     - sysctl -a 2>/dev/null | grep disable_ipv6
     - ip -6 addr
-    
-matrix:
-    include:
-        - env: HOST=x86
-          os: linux
-          dist: focal
-        - env: HOST=Power
-          arch: ppc64le
-          os: linux
-          dist: focal
+   
 
 after_script:
     - cat  /root/.npm/_logs/*-debug-0.log

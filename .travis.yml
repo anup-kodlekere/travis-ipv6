@@ -18,9 +18,9 @@
 #     - sysctl -a 2>/dev/null | grep disable_ipv6
 #     - curl https://api64.ipify.org
 #     - python test.py
-arch: ppc64le
-dist: focal
-os: linux
+# arch: ppc64le
+# dist: focal
+# os: linux
 language: shell
 
 services:
@@ -29,12 +29,28 @@ services:
 before_install:
     - docker pull registry.access.redhat.com/ubi8/ubi:8.5
 
-script:
-    - nproc
-    - free -h
-    - chmod +x script.sh
-    - docker run -dt --name test --network host --rm -v $PWD:/home/tester registry.access.redhat.com/ubi8/ubi:8.5 bash -c "/home/tester/script.sh"
-    - docker logs -f test
+# script:
+#     - nproc
+#     - free -h
+#     - chmod +x script.sh
+#     - docker run -dt --name test --network host --rm -v $PWD:/home/tester registry.access.redhat.com/ubi8/ubi:8.5 bash -c "/home/tester/script.sh"
+#     - docker logs -f test
+ 
+ script:
+    - ping6 -c3 2606:4700::6810:1023
+    - cat /sys/module/ipv6/parameters/disable
+    - sysctl -a 2>/dev/null | grep disable_ipv6
+    - ip -6 addr
+    
+jobs:
+    include:
+        - env: HOST=x86
+          os: linux
+          dist: focal
+        - env: HOST=Power
+          arch: ppc64le
+          os: linux
+          dist: focal
 
 after_script:
     - cat  /root/.npm/_logs/*-debug-0.log

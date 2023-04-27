@@ -46,8 +46,10 @@ script:
 jobs:
     include:
         - env: HOST=x86
+          dist: focal
         - env: HOST=Power
           arch: ppc64le
+          dist: focal
           
 
 # after_script:

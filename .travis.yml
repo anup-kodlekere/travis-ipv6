@@ -38,7 +38,7 @@ before_install:
  
 script:
     - ping6 -c3 2606:4700::6810:1023
-    - docker run -dt --name test --network host --rm -v $PWD:/home/tester registry.access.redhat.com/ubi8/ubi:8.5 'ping6 -c3 2606:4700::6810:1023'
+    - docker run -dt --name test --rm -v $PWD:/home/tester registry.access.redhat.com/ubi8/ubi:8.5 'ping6 -c3 2606:4700::6810:1023'
     - cat /sys/module/ipv6/parameters/disable
     - sysctl -a 2>/dev/null | grep disable_ipv6
     - ip -6 addr

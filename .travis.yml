@@ -49,6 +49,7 @@ jobs:
           dist: focal
         - env: HOST=Power
           arch: ppc64le
+          group: edge
           dist: focal
           
 
